@@ -4,7 +4,8 @@
   "description": "Social Network for Developers",
   "main": "server.js",
   "scripts": {
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "server:prod": "NODE_ENV=production nodemon server.js"
   },
   "author": "Santhosh Kumar Muddamsetty",
   "license": "ISC",
@@ -18,7 +19,8 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.11",
     "request": "^2.88.2",
-    "validator": "^13.0.0"
+    "validator": "^13.0.0",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "concurrently": "^5.2.0",
