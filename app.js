@@ -4,6 +4,7 @@ const globalErrorHandler = require('./controllers/errorController');
 
 const app = express();
 const userRouter = require('./routes/user');
+const profileRouter = require('./routes/profile');
 
 /*****************Global Middlwares Start************************/
 /* 
@@ -24,6 +25,7 @@ app.use(express.json({ limit: '10kb' }));
 
 /*****************API Routes Start************************/
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/profile', profileRouter);
 /*****************API Routes End************************/
 
 /**
