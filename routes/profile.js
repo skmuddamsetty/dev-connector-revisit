@@ -9,4 +9,6 @@ router.get(
   profileController.getCurrentUserProfile
 );
 
+router.post('/', authController.protect, profileController.createProfile);
+
 module.exports = router;
