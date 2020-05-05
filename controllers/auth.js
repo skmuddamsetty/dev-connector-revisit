@@ -17,7 +17,7 @@ exports.signup = catchAsync(async (req, res) => {
 /**
  * @route  GET /api/v1/users/auth
  * @desc   Finds and returns the user with the id based on the id coming from protect *         middleware
- * @access Public
+ * @access Protected
  */
 exports.auth = catchAsync(async (req, res) => {
   const user = await User.findById(req.user._id);
@@ -25,7 +25,31 @@ exports.auth = catchAsync(async (req, res) => {
 });
 
 /**
- * checks if the user is logged in and is a valis user
+ * @route  POST /api/v1/users/login
+ * @desc   Authenticates the user based on the email and password and if valid returns the token
+ * @access Public
+ */
+exports.login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+  // 1) Check if Email and password exist
+  if (!email || !password) {
+    return next(new AppError('Please provide Email and Password'), 400);
+  }
+  // 2) Check if user exists and password is correct
+  // explicitly selecting password because, we have made the password field select as false in the User Model, therefore find will not pickup password.
+  // therefore we have to explicitly select the password here
+  const user = await User.findOne({ email }).select('+password');
+  if (!user || !(await user.correctPassword(password, user.password))) {
+    return next(new AppError('Email or Password is Incorrect!', 401));
+  }
+  // 3) If everthing okay, send token to the client
+  createAndSendToken(user, 200, res);
+  // const token = signToken(user._id);
+  // res.status(200).json({ status: 'success', token });
+});
+
+/**
+ * checks if the user is logged in and valid user
  */
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) get the token and check if it's there
@@ -66,6 +90,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = freshUser;
   next();
 });
+
 /*****************Helper Methods Start************************/
 const createAndSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
