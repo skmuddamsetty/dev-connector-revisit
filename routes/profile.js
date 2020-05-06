@@ -3,13 +3,11 @@ const profileController = require('../controllers/profile');
 const authController = require('../controllers/auth');
 
 const router = express.Router();
-
 router.get(
   '/me',
   authController.protect,
   profileController.getCurrentUserProfile
 );
-
 router
   .route('/')
   .get(profileController.getAllProfiles)
