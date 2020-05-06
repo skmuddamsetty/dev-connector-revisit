@@ -1,4 +1,5 @@
 const catchAsync = require('../utils/catchAsync');
+const request = require('request');
 const AppError = require('../utils/appError');
 const Profile = require('../models/Profile');
 /**
@@ -219,4 +220,28 @@ exports.deleteEducation = catchAsync(async (req, res, next) => {
   profile.education.splice(removeIndex, 1);
   await profile.save();
   res.status(200).json({ status: 'success', profile });
+});
+
+/**
+ * @route  GET /api/v1/profile/github/:username
+ * @desc   Get user repos from Github
+ * @access Public
+ */
+exports.getUserReposFromGithub = catchAsync(async (req, res, next) => {
+  const options = {
+    uri: `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc&client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_SECRET}`,
+    method: 'GET',
+    headers: { 'user-agent': 'node.js' },
+  };
+  request(options, (error, response, body) => {
+    if (error || response.statusCode !== 200) {
+      return next(
+        new AppError(
+          'Something went wrong while getting the user repos from Github',
+          400
+        )
+      );
+    }
+    res.status(200).json({ status: 'success', repos: JSON.parse(body) });
+  });
 });
