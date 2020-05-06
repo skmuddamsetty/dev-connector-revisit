@@ -1,7 +1,6 @@
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const Profile = require('../models/Profile');
-
 /**
  * @route  GET /api/v1/profile/me
  * @desc   Get Current Logged in User Profile
@@ -68,4 +67,56 @@ exports.createProfile = catchAsync(async (req, res, next) => {
     profile = await Profile.create(profileFields);
   }
   res.status(200).json({ status: 'success', profile });
+});
+
+/**
+ * @route  GET /api/v1/profile
+ * @desc   Get All Profiles
+ * @access Public
+ */
+exports.getAllProfiles = catchAsync(async (req, res) => {
+  const profiles = await Profile.find().populate({
+    path: 'user',
+    select: ['-__v', '-passwordChangedAt'],
+  });
+  return res
+    .status(200)
+    .json({ status: 'success', results: profiles.length, data: { profiles } });
+});
+
+/**
+ * @route  GET /api/v1/profile/:userId
+ * @desc   Get All Profiles
+ * @access Public
+ */
+exports.getProfileById = catchAsync(async (req, res, next) => {
+  console.log(req.params.userId);
+  const profile = await Profile.findOne({ user: req.params.userId }).populate({
+    path: 'user',
+    select: ['-__v', '-passwordChangedAt'],
+  });
+  if (!profile) {
+    return next(new AppError('No Profile found for this user', 400));
+  }
+  return res.status(200).json({ status: 'success', profile });
+});
+
+/**
+ * @route  DELETE /api/v1/profile/
+ * @desc   Delete Profile, Posts and User for the logged in user
+ * @access Protected
+ */
+exports.deleteMyProfile = catchAsync(async (req, res) => {
+  await Profile.findOneAndRemove({ user: req.user._id });
+  return res.status(204).json({ status: 'success' });
+});
+
+/**
+ * @route  DELETE /api/v1/profile/:userId
+ * @desc   Delete Profile for the userId passed in params
+ * @access Public
+ */
+exports.deleteUserProfile = catchAsync(async (req, res) => {
+  await Profile.findOneAndRemove({ user: req.params.userId });
+  return res.status(204).json({ status: 'success' });
 });
