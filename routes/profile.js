@@ -27,4 +27,12 @@ router
   .route('/experience/:expId')
   .delete(authController.protect, profileController.deleteExperience);
 
+router
+  .route('/education')
+  .put(authController.protect, profileController.addEducation);
+
+router
+  .route('/education/:eduId')
+  .delete(authController.protect, profileController.deleteEducation);
+
 module.exports = router;

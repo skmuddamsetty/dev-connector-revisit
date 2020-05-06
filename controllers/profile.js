@@ -166,3 +166,57 @@ exports.deleteExperience = catchAsync(async (req, res, next) => {
   await profile.save();
   res.status(200).json({ status: 'success', profile });
 });
+
+/**
+ * @route  PUT /api/v1/profile/education
+ * @desc   Add education
+ * @access Protected
+ */
+exports.addEducation = catchAsync(async (req, res, next) => {
+  const {
+    school,
+    degree,
+    fieldofstudy,
+    from,
+    current,
+    description,
+    to,
+  } = req.body;
+  if (!school || !degree || !fieldofstudy || !from) {
+    return next(new AppError('Please provide school, fieldofstudy, from', 400));
+  }
+  const newEdu = {
+    school,
+    degree,
+    fieldofstudy,
+    from,
+    to,
+    current,
+    description,
+  };
+
+  const profile = await Profile.findOne({ user: req.user._id });
+
+  if (!profile) {
+    return next(new AppError('No Profile found for this user', 400));
+  }
+  profile.education.unshift(newEdu);
+  await profile.save();
+  res.status(200).json({ status: 'success', profile });
+});
+
+/**
+ * @route  DELETE /api/v1/profile/education/:eduId
+ * @desc   Delete Education
+ * @access Protected
+ */
+exports.deleteEducation = catchAsync(async (req, res, next) => {
+  const profile = await Profile.findOne({ user: req.user._id });
+  // Get remove index
+  const removeIndex = profile.education
+    .map((edu) => edu._id)
+    .indexOf(req.params.eduId);
+  profile.education.splice(removeIndex, 1);
+  await profile.save();
+  res.status(200).json({ status: 'success', profile });
+});
