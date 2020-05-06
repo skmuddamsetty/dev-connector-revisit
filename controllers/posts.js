@@ -62,3 +62,53 @@ exports.deletePostById = catchAsync(async (req, res, next) => {
   await post.remove();
   res.status(204).json({ status: 'success', post });
 });
+
+/**
+ * @route  PUT /api/v1/posts/like/:postId
+ * @desc   updates likes array for the given postId
+ * @access Protected
+ */
+exports.likePost = catchAsync(async (req, res, next) => {
+  const post = await Post.findById(req.params.postId);
+  if (!post) {
+    return next(new AppError('Post with that id not found!', 400));
+  }
+  // check if the post has already been liked by the user
+  if (
+    post.likes.filter(
+      (like) => like.user.toString() === req.user._id.toString()
+    ).length > 0
+  ) {
+    return next(new AppError('Post already liked!', 400));
+  }
+  post.likes.unshift({ user: req.user._id });
+  await post.save();
+  res.status(200).json({ status: 'success', likes: post.likes });
+});
+
+/**
+ * @route  PUT /api/v1/posts/unlike/:postId
+ * @desc   updates likes array for the given postId
+ * @access Protected
+ */
+exports.unlikePost = catchAsync(async (req, res, next) => {
+  const post = await Post.findById(req.params.postId);
+  if (!post) {
+    return next(new AppError('Post with that id not found!', 400));
+  }
+  // check if the post has already been liked by the user
+  if (
+    post.likes.filter(
+      (like) => like.user.toString() === req.user._id.toString()
+    ).length === 0
+  ) {
+    return next(new AppError('Post has not yet been liked!', 400));
+  }
+  // Get remove index
+  const removeIndex = post.likes
+    .map((like) => like.user.toString())
+    .indexOf(req.user._id);
+  post.likes.splice(removeIndex, 1);
+  await post.save();
+  res.status(200).json({ status: 'success', likes: post.likes });
+});
