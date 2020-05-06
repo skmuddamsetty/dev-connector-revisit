@@ -19,4 +19,12 @@ router
   .get(profileController.getProfileById)
   .delete(profileController.deleteUserProfile);
 
+router
+  .route('/experience')
+  .put(authController.protect, profileController.addProfileExperience);
+
+router
+  .route('/experience/:expId')
+  .delete(authController.protect, profileController.deleteExperience);
+
 module.exports = router;

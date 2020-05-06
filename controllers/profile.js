@@ -120,3 +120,49 @@ exports.deleteUserProfile = catchAsync(async (req, res) => {
   await Profile.findOneAndRemove({ user: req.params.userId });
   return res.status(204).json({ status: 'success' });
 });
+
+/**
+ * @route  PUT /api/v1/profile/experience
+ * @desc   Add profile experience
+ * @access Protected
+ */
+exports.addProfileExperience = catchAsync(async (req, res, next) => {
+  const { company, title, from, to, location, current, description } = req.body;
+  if (!company || !title || !from) {
+    return next(new AppError('Please provide company, title, from', 400));
+  }
+  const newExp = {
+    title,
+    company,
+    from,
+    to,
+    location,
+    current,
+    description,
+  };
+
+  const profile = await Profile.findOne({ user: req.user._id });
+
+  if (!profile) {
+    return next(new AppError('No Profile found for this user', 400));
+  }
+  profile.experience.unshift(newExp);
+  await profile.save();
+  res.status(200).json({ status: 'success', profile });
+});
+
+/**
+ * @route  DELETE /api/v1/profile/experience/:expId
+ * @desc   Delete profile experience
+ * @access Protected
+ */
+exports.deleteExperience = catchAsync(async (req, res, next) => {
+  const profile = await Profile.findOne({ user: req.user._id });
+  // Get remove index
+  const removeIndex = profile.experience
+    .map((exp) => exp._id)
+    .indexOf(req.params.expId);
+  profile.experience.splice(removeIndex, 1);
+  await profile.save();
+  res.status(200).json({ status: 'success', profile });
+});
