@@ -21,4 +21,12 @@ router
   .route('/unlike/:postId')
   .put(authController.protect, postsController.unlikePost);
 
+router
+  .route('/comment/:postId')
+  .post(authController.protect, postsController.commentOnPost);
+
+router
+  .route('/comment/:postId/:commentId')
+  .delete(authController.protect, postsController.deleteComment);
+
 module.exports = router;

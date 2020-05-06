@@ -112,3 +112,59 @@ exports.unlikePost = catchAsync(async (req, res, next) => {
   await post.save();
   res.status(200).json({ status: 'success', likes: post.likes });
 });
+
+/**
+ * @route  POST /api/v1/posts/comment/:postId
+ * @desc   Comment on a post for logged in user
+ * @access Protected
+ */
+
+exports.commentOnPost = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user._id).select('-password');
+  const post = await Post.findById(req.params.postId);
+  const newComment = {
+    text: req.body.text,
+    name: user.name,
+    avatar: user.avatar,
+    user: req.user._id,
+  };
+  post.comments.unshift(newComment);
+  await post.save();
+  res.status(200).json({ status: 'success', comments: post.comments });
+});
+
+/**
+ * @route  DELETE /api/v1/posts/comment/:postId/:commentId
+ * @desc   Delete a comment for logged in user
+ * @access Protected
+ */
+
+exports.deleteComment = catchAsync(async (req, res, next) => {
+  const post = await Post.findById(req.params.postId);
+  // pull out comment
+  console.log(post.comments);
+  const comment = post.comments.find(
+    (comment) => comment._id.toString() === req.params.commentId.toString()
+  );
+  // Make sure the comment exists
+  if (!comment) {
+    return next(new AppError('Comment does not exist!', 400));
+  }
+  // check user
+  if (comment.user.toString() !== req.user._id.toString()) {
+    return next(new AppError('User Not Authorized!', 401));
+  }
+  // Get remove index
+  const removeIndex = post.comments
+    .map((comment) => comment.user.toString())
+    .indexOf(req.user._id);
+  post.comments.splice(removeIndex, 1);
+  await post.save();
+  res
+    .status(200)
+    .json({
+      status: 'success',
+      results: post.comments.length,
+      comments: post.comments,
+    });
+});
