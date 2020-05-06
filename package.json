@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "server": "nodemon server.js",
-    "server:prod": "NODE_ENV=production nodemon server.js"
+    "server:prod": "NODE_ENV=production nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Santhosh Kumar Muddamsetty",
   "license": "ISC",
