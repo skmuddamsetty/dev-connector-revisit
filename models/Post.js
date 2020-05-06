@@ -21,6 +21,7 @@ const postSchema = new mongoose.Schema({
       user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
+        required: [true, 'A like must belong to a user.'],
       },
     },
   ],
@@ -29,6 +30,7 @@ const postSchema = new mongoose.Schema({
       user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
+        required: [true, 'A comment must belong to a user.'],
       },
       text: {
         type: String,
