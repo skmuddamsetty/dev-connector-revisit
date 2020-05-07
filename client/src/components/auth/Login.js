@@ -1,7 +1,52 @@
-import React from 'react';
+import React, { useState, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
-  return <div>Login</div>;
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  // destructuring to pull out values in state
+  const { email, password } = formData;
+
+  const inputChangeHandler = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    console.log(formData);
+  };
+
+  return (
+    <Fragment>
+      <h1 className='large text-primary'>Login</h1>
+      <p className='lead'>
+        <i className='fas fa-user'></i> Log in to your account
+      </p>
+      <form className='form' onSubmit={(e) => onSubmitHandler(e)}>
+        <div className='form-group'>
+          <input
+            type='email'
+            placeholder='Email Address'
+            name='email'
+            value={email}
+            onChange={(e) => inputChangeHandler(e)}
+          />
+        </div>
+        <div className='form-group'>
+          <input
+            type='password'
+            placeholder='Password'
+            name='password'
+            minLength='8'
+            value={password}
+            onChange={(e) => inputChangeHandler(e)}
+          />
+        </div>
+        <input type='submit' className='btn btn-primary' value='Login' />
+      </form>
+      <p className='my-1'>
+        Don't have an account? <Link to='/register'>Sign Up</Link>
+      </p>
+    </Fragment>
+  );
 };
 
 export default Login;

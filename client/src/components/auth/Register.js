@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Register = () => {
   // below statment is same as
@@ -13,21 +14,35 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    password2: '',
+    passwordConfirm: '',
   });
 
   // destructuring to pull out values in state
-  const { name, email, password, password2 } = formData;
+  const { name, email, password, passwordConfirm } = formData;
 
   const inputChangeHandler = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const onSubmitHandler = (e) => {
+  const onSubmitHandler = async (e) => {
     e.preventDefault();
-    if (password !== password2) {
+    if (password !== passwordConfirm) {
       console.log('password do not match');
     } else {
       console.log(formData);
+      // calling rest service from component example
+      // const newUser = { name, email, password, passwordConfirm };
+      // try {
+      //   const config = {
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //     },
+      //   };
+      //   const body = JSON.stringify(newUser);
+      //   const res = await axios.post('/api/v1/users/signup', body, config);
+      //   console.log(res);
+      // } catch (error) {
+      //   console.log(error.response.data);
+      // }
     }
   };
 
@@ -66,7 +81,7 @@ const Register = () => {
             type='password'
             placeholder='Password'
             name='password'
-            minLength='6'
+            minLength='8'
             value={password}
             onChange={(e) => inputChangeHandler(e)}
           />
@@ -75,16 +90,16 @@ const Register = () => {
           <input
             type='password'
             placeholder='Confirm Password'
-            name='password2'
-            minLength='6'
-            value={password2}
+            name='passwordConfirm'
+            minLength='8'
+            value={passwordConfirm}
             onChange={(e) => inputChangeHandler(e)}
           />
         </div>
         <input type='submit' className='btn btn-primary' value='Register' />
       </form>
       <p className='my-1'>
-        Already have an account? <a href='login.html'>Sign In</a>
+        Already have an account? <Link to='/login'>Sign In</Link>
       </p>
     </Fragment>
   );
