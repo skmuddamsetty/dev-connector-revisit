@@ -1,7 +1,9 @@
 import React, { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { setAlert } from '../../actions/alerts';
+import { connect } from 'react-redux';
 
-const Register = () => {
+const Register = ({ setAlert }) => {
   // below statment is same as
   // state  = {
   //   formData: {
@@ -26,7 +28,7 @@ const Register = () => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     if (password !== passwordConfirm) {
-      console.log('password do not match');
+      setAlert('password do not match', 'danger');
     } else {
       console.log(formData);
       // calling rest service from component example
@@ -105,4 +107,9 @@ const Register = () => {
   );
 };
 
-export default Register;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setAlert: (msg, alertType) => dispatch(setAlert(msg, alertType)),
+  };
+};
+export default connect(null, mapDispatchToProps)(Register);
