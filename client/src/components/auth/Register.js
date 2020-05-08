@@ -2,8 +2,9 @@ import React, { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { setAlert } from '../../actions/alerts';
 import { connect } from 'react-redux';
+import { register } from '../../actions/auth';
 
-const Register = ({ setAlert }) => {
+const Register = ({ setAlert, register }) => {
   // below statment is same as
   // state  = {
   //   formData: {
@@ -31,6 +32,7 @@ const Register = ({ setAlert }) => {
       setAlert('password do not match', 'danger');
     } else {
       console.log(formData);
+      register(formData);
       // calling rest service from component example
       // const newUser = { name, email, password, passwordConfirm };
       // try {
@@ -60,7 +62,7 @@ const Register = ({ setAlert }) => {
             type='text'
             placeholder='Name'
             name='name'
-            required
+            // required
             value={name}
             onChange={(e) => inputChangeHandler(e)}
           />
@@ -110,6 +112,7 @@ const Register = ({ setAlert }) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setAlert: (msg, alertType) => dispatch(setAlert(msg, alertType)),
+    register: (formData) => dispatch(register(formData)),
   };
 };
 export default connect(null, mapDispatchToProps)(Register);
