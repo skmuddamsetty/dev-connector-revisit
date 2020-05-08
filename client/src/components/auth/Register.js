@@ -1,10 +1,10 @@
 import React, { Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { setAlert } from '../../actions/alerts';
 import { connect } from 'react-redux';
 import { register } from '../../actions/auth';
 
-const Register = ({ setAlert, register }) => {
+const Register = ({ setAlert, register, isAuthenticated }) => {
   // below statment is same as
   // state  = {
   //   formData: {
@@ -49,6 +49,11 @@ const Register = ({ setAlert, register }) => {
       // }
     }
   };
+
+  // Redirecting based on authenticated state
+  if (isAuthenticated) {
+    return <Redirect to='/dashboard' />;
+  }
 
   return (
     <Fragment>
@@ -115,4 +120,11 @@ const mapDispatchToProps = (dispatch) => {
     register: (formData) => dispatch(register(formData)),
   };
 };
-export default connect(null, mapDispatchToProps)(Register);
+
+const mapStateToProps = (state) => {
+  return {
+    isAuthenticated: state.auth.isAuthenticated,
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);
