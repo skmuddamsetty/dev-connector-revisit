@@ -20,7 +20,7 @@ exports.signup = catchAsync(async (req, res) => {
  * @access Protected
  */
 exports.auth = catchAsync(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id).select('-password');
   res.status(200).json({ status: 'success', user });
 });
 
@@ -54,6 +54,7 @@ exports.login = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) get the token and check if it's there
   let token;
+  console.log(req.headers);
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')

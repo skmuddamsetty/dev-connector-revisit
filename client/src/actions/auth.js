@@ -1,7 +1,39 @@
 import axios from 'axios';
-import { REGISTER_SUCCESS, REGISTER_FAIL } from './types';
+import {
+  REGISTER_SUCCESS,
+  REGISTER_FAIL,
+  USER_LOADED,
+  AUTH_ERROR,
+} from './types';
 import { setAlert } from '../actions/alerts';
+import setAuthToken from '../utils/setAuthToken';
 
+/**
+ * Load User
+ */
+export const loadUser = () => async (dispatch) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    setAuthToken(token);
+  }
+  try {
+    // const config = {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // };
+    const res = await axios.get('/api/v1/users/auth');
+    dispatch({ type: USER_LOADED, payload: res.data });
+  } catch (error) {
+    dispatch({ type: AUTH_ERROR });
+  }
+};
+
+/**
+ * Register action
+ * @param {*} param0
+ */
 export const register = ({ name, email, password, passwordConfirm }) => async (
   dispatch
 ) => {
@@ -20,10 +52,13 @@ export const register = ({ name, email, password, passwordConfirm }) => async (
     });
   } catch (err) {
     console.log(err.response.data);
-    const errorMessage = err.response.data.error.message;
     dispatch({ type: REGISTER_FAIL });
-    if (errorMessage) {
-      dispatch(setAlert(errorMessage, 'danger'));
-    }
+    // TODO
+    // const erroObj = err.response.data;
+    // if (erroObj && erroObj.error && erroObj.error.message) {
+    //   dispatch(setAlert(erroObj.error.message, 'danger'));
+    // } else {
+    //   dispatch(setAlert(err.response.data, 'danger'));
+    // }
   }
 };
