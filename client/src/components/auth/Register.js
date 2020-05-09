@@ -50,10 +50,10 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
     }
   };
 
-  // Redirecting based on authenticated state
-  if (isAuthenticated) {
-    return <Redirect to='/dashboard' />;
-  }
+  // // Redirecting based on authenticated state
+  // if (isAuthenticated) {
+  //   return <Redirect to='/dashboard' />;
+  // }
 
   return (
     <Fragment>

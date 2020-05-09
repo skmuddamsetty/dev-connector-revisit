@@ -11,6 +11,9 @@ import store from './store/configureStore';
 import Alert from './components/layout/Alert';
 import setAuthToken from './utils/setAuthToken';
 import { loadUser } from './actions/auth';
+import Dashboard from './components/dashboard/Dashboard';
+import PrivateRoute from './components/routing/PrivateRoute';
+import PublicRoute from './components/routing/PublicRoute';
 
 const token = localStorage.getItem('token');
 if (token) {
@@ -34,8 +37,9 @@ const App = () => {
           <section className='container'>
             <Alert />
             <Switch>
-              <Route exact path='/login' component={Login} />
-              <Route exact path='/register' component={Register} />
+              <PublicRoute exact path='/login' component={Login} />
+              <PublicRoute exact path='/register' component={Register} />
+              <PrivateRoute exact path='/dashboard' component={Dashboard} />
             </Switch>
           </section>
         </Fragment>

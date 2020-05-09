@@ -17,9 +17,9 @@ const Login = ({ login, isAuthenticated }) => {
   };
 
   // Redirecting based on authenticated state
-  if (isAuthenticated) {
-    return <Redirect to='/dashboard' />;
-  }
+  // if (isAuthenticated) {
+  //   return <Redirect to='/dashboard' />;
+  // }
 
   return (
     <Fragment>
