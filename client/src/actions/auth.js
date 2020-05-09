@@ -8,7 +8,7 @@ import {
   LOGIN_FAIL,
   LOGOUT,
 } from './types';
-import { setAlert } from '../actions/alerts';
+// import { setAlert } from '../actions/alerts';
 import setAuthToken from '../utils/setAuthToken';
 
 /**
